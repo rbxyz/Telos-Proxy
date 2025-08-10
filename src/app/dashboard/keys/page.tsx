@@ -30,8 +30,9 @@ export default function KeysPage() {
     const res = await createKey.mutateAsync({ name });
     setNewKeyName("");
     if (res?.record?.id) {
-      setPlainById((m) => ({ ...m, [res.record.id]: res.apiKey }));
-      setShowById((m) => ({ ...m, [res.record.id]: true }));
+      const id = String(res.record.id);
+      setPlainById((m) => ({ ...m, [id]: res.apiKey }));
+      setShowById((m) => ({ ...m, [id]: true }));
       show("Chave criada. Copie o segredo agora.");
     }
     await utils.keys.list.invalidate();
@@ -84,27 +85,27 @@ export default function KeysPage() {
         </div>
         <ul className="divide-y">
           {formattedKeys.map((k) => (
-            <li key={k.id} className="grid grid-cols-12 items-center gap-3 p-3">
+            <li key={k.id as unknown as string} className="grid grid-cols-12 items-center gap-3 p-3">
               <div className="col-span-3 truncate">
                 <div className="font-medium">{k.name}</div>
-                {plainById[k.id] && (
+                {plainById[String(k.id)] && (
                   <div className="mt-1 text-xs text-gray-600">
                     <span className="mr-2">Segredo:</span>
                     <code className="rounded bg-gray-100 px-1 py-0.5">
-                      {showById[k.id] ? plainById[k.id] : "••••••••••••"}
+                      {showById[String(k.id)] ? plainById[String(k.id)] : "••••••••••••"}
                     </code>
                     <button
                       type="button"
                       className="ml-2 text-indigo-600 hover:underline"
-                      onClick={() => setShowById((m) => ({ ...m, [k.id]: !m[k.id] }))}
+                      onClick={() => setShowById((m) => ({ ...m, [String(k.id)]: !m[String(k.id)] }))}
                     >
-                      {showById[k.id] ? "ocultar" : "mostrar"}
+                      {showById[String(k.id)] ? "ocultar" : "mostrar"}
                     </button>
                     <button
                       type="button"
                       className="ml-2 text-indigo-600 hover:underline"
                       onClick={async () => {
-                        await navigator.clipboard.writeText(plainById[k.id]);
+                        await navigator.clipboard.writeText(plainById[String(k.id)]);
                         show("Copiado para a área de transferência");
                       }}
                     >
@@ -121,7 +122,7 @@ export default function KeysPage() {
                 {!k.revokedAt ? (
                   <button
                     className="rounded border border-red-500 px-2 py-1 text-sm text-red-600 hover:bg-red-50"
-                    onClick={() => setConfirmId(k.id)}
+                    onClick={() => setConfirmId(String(k.id))}
                   >
                     Revogar
                   </button>
