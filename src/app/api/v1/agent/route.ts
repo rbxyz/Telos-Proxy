@@ -16,7 +16,12 @@ export async function POST(req: Request) {
         const auth = await findUserByApiKey(db, apiKey);
         if (!auth) return NextResponse.json({ error: "invalid api key" }, { status: 401 });
 
-        const json = await req.json().catch(() => null);
+        let json: unknown = null;
+        try {
+            json = await req.json();
+        } catch {
+            json = null;
+        }
         const parse = BodySchema.safeParse(json);
         if (!parse.success) {
             return NextResponse.json({ error: "invalid body" }, { status: 400 });
