@@ -1,0 +1,2 @@
+ALTER TABLE "telos-proxy_log" ADD COLUMN "api_key_id" uuid;--> statement-breakpoint
+ALTER TABLE "telos-proxy_log" ADD CONSTRAINT "telos-proxy_log_api_key_id_telos-proxy_api_key_id_fk" FOREIGN KEY ("api_key_id") REFERENCES "public"."telos-proxy_api_key"("id") ON DELETE no action ON UPDATE no action;

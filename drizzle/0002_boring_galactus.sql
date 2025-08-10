@@ -1,0 +1,1 @@
+ALTER TABLE "telos-proxy_api_key" ALTER COLUMN "scopes" SET DEFAULT '[]'::jsonb;
