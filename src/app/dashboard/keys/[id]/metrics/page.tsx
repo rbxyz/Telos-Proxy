@@ -10,7 +10,7 @@ function Line({ points, color = "#4f46e5" }: { points: Array<{ x: number; y: num
 
 export default function KeyMetricsPage() {
   const params = useParams<{ id: string }>();
-  const id = params.id as string;
+  const id = params.id;
   const days = 7;
   const { data } = api.metrics.byApiKey.useQuery({ apiKeyId: id, days });
 

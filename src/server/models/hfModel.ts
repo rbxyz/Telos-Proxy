@@ -33,10 +33,14 @@ export class HuggingFaceModel implements AgentModel {
             throw new Error(`HF API error ${res.status}: ${text}`);
         }
 
-        const data = (await res.json()) as unknown;
-        // Different models may return different shapes; common text generation models return array of { generated_text }
-        if (Array.isArray(data) && data.length > 0 && typeof data[0]?.generated_text === "string") {
-            return data[0].generated_text as string;
+        type TextGenResponseItem = { generated_text?: unknown };
+        const data: unknown = await res.json();
+
+        if (Array.isArray(data) && data.length > 0) {
+            const first = data[0] as TextGenResponseItem;
+            if (typeof first.generated_text === "string") {
+                return first.generated_text;
+            }
         }
         // Fallback: try to stringify
         return typeof data === "string" ? data : JSON.stringify(data);

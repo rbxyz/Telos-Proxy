@@ -19,7 +19,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     setToasts((t) => t.filter((x) => x.id !== id));
   }, []);
 
-  const show = useCallback((message: string, ms: number = 2500) => {
+  const show = useCallback((message: string, ms = 2500) => {
     const id = Math.random().toString(36).slice(2);
     setToasts((t) => [...t, { id, message }]);
     if (ms > 0) setTimeout(() => remove(id), ms);

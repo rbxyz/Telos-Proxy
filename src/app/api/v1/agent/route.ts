@@ -1,7 +1,13 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "~/server/db";
 import { findUserByApiKey } from "~/server/utils/apiKey";
 import { processAgentMessage } from "~/server/services/agentPipeline";
+
+const BodySchema = z.object({
+    input: z.string(),
+    sessionId: z.string().optional(),
+});
 
 export async function POST(req: Request) {
     try {
@@ -10,18 +16,19 @@ export async function POST(req: Request) {
         const auth = await findUserByApiKey(db, apiKey);
         if (!auth) return NextResponse.json({ error: "invalid api key" }, { status: 401 });
 
-        const body = await req.json().catch(() => null);
-        if (!body || typeof body.input !== "string") {
+        const json = await req.json().catch(() => null);
+        const parse = BodySchema.safeParse(json);
+        if (!parse.success) {
             return NextResponse.json({ error: "invalid body" }, { status: 400 });
         }
-        const sessionId = typeof body.sessionId === "string" ? body.sessionId : "default";
+        const { input, sessionId } = parse.data;
 
         const result = await processAgentMessage({
             db,
             userId: auth.user.id,
             apiKeyId: auth.apiKey.id,
-            input: body.input,
-            sessionId,
+            input,
+            sessionId: sessionId ?? "default",
         });
         return NextResponse.json(result);
     } catch (e) {
