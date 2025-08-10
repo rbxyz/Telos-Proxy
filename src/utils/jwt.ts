@@ -12,7 +12,10 @@ export function signJwt(
     payload: JwtPayload,
     expiresIn: string | number = DEFAULT_EXPIRATION,
 ): string {
-    const options: SignOptions = { algorithm: "HS256", expiresIn: expiresIn as any };
+    const options: SignOptions = { algorithm: "HS256" };
+    if (typeof expiresIn === "number" || typeof expiresIn === "string") {
+        options.expiresIn = expiresIn as never; // jsonwebtoken typings accept string | number
+    }
     return jwt.sign(payload, env.JWT_SECRET as Secret, options);
 }
 

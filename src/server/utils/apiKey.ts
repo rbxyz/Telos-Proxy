@@ -3,9 +3,10 @@ import { and, eq, isNull } from "drizzle-orm";
 import { apiKeys, users } from "~/server/db/schema";
 
 export async function findUserByApiKey(db: typeof import("~/server/db").db, providedKey: string) {
-    const match = providedKey.match(/^tel_([a-f0-9]{12})_/);
+    const regex = /^tel_([a-f0-9]{12})_/;
+    const match = regex.exec(providedKey);
     if (!match) return null;
-    const prefix = match[1] as string;
+    const prefix = match[1]!;
     const keyHash = crypto.createHash("sha256").update(providedKey).digest("hex");
 
     const rec = await db.query.apiKeys.findFirst({
