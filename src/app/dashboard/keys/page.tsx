@@ -105,7 +105,12 @@ export default function KeysPage() {
                       type="button"
                       className="ml-2 text-indigo-600 hover:underline"
                       onClick={async () => {
-                        await navigator.clipboard.writeText(plainById[String(k.id)]);
+                        const secret = plainById[String(k.id)];
+                        if (!secret) {
+                          show("Nada para copiar");
+                          return;
+                        }
+                        await navigator.clipboard.writeText(secret);
                         show("Copiado para a área de transferência");
                       }}
                     >
