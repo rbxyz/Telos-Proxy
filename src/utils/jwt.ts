@@ -6,10 +6,13 @@ export type JwtPayload = {
     email: string;
 };
 
-const DEFAULT_EXPIRATION = "7d";
+const DEFAULT_EXPIRATION: string | number = "7d";
 
-export function signJwt(payload: JwtPayload, expiresIn: string = DEFAULT_EXPIRATION): string {
-    const options: SignOptions = { algorithm: "HS256", expiresIn };
+export function signJwt(
+    payload: JwtPayload,
+    expiresIn: string | number = DEFAULT_EXPIRATION,
+): string {
+    const options: SignOptions = { algorithm: "HS256", expiresIn: expiresIn as any };
     return jwt.sign(payload, env.JWT_SECRET as Secret, options);
 }
 

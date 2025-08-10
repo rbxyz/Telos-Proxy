@@ -24,10 +24,15 @@ export const authRouter = createTRPCRouter({
         }
 
         const passwordHash = await bcrypt.hash(input.password, 10);
-        const [created] = (await ctx.db.insert(users).values({
-            email: input.email,
-            passwordHash,
-        }).returning()) as [{ id: string; email: string }];
+        const [created] = await ctx.db
+            .insert(users)
+            .values({
+                email: input.email,
+                passwordHash,
+            })
+            .returning({ id: users.id, email: users.email });
+
+        if (!created) throw new Error("Falha ao registrar usuário");
 
         const token = signJwt({ sub: created.id, email: created.email });
         return { token };

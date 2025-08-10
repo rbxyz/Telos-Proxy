@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { verifyJwt } from "~/utils/jwt";
-import { db } from "~/server/api/trpc";
 import { sql } from "drizzle-orm";
 
 const authGuard = async (headers: Headers) => {
